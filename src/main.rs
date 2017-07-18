@@ -1,11 +1,22 @@
 mod server;
 
+extern crate sysfs_gpio;
+
 /// Main function
+///
+/// #Description
+///
+/// Application entry point which starts the TCP
+/// server and listens for connection.
 fn main() {
 
-    let mut s = server::Server {
+
+    /*
+     * Declare and start server
+     */
+    let mut io_server = server::Server {
         address : "127.0.0.1:3333".to_string(),
     };
 
-    s.start();
+    io_server.start();
 }
