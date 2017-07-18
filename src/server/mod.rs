@@ -1,4 +1,5 @@
 mod parser;
+pub mod gpio;
 
 use std::net::TcpListener;
 use std::net::TcpStream;
