@@ -11,6 +11,14 @@ use std::str;
 
 
 /// Server structure and implementation
+///
+/// # Variables
+///
+/// * `address` : ip address and port number of server
+///
+/// # Methods
+///
+/// * `fn start()` : starts the server and spawns thread for client
 
 pub struct Server {
     pub address : String,
@@ -19,22 +27,35 @@ pub struct Server {
 impl Server {
 
     /// start server
+    ///
+    /// # Return values
+    ///
+    /// * `bool` : returns true(success) or false(failure)
     pub fn start(&mut self) -> bool
     {
-        let rc : bool = true;
+        let mut rc : bool = true;
         let mut listener = TcpListener::bind(&self.address).unwrap();
         
         println!("Listening for connections...");
 
+        /*
+         * Infinite loop : listen for connections
+         */
         loop{
             match listener.accept() {
                 Ok((mut socket, addr)) => {
 
+                    /*
+                     * Spawns thread
+                     */
                     let client_thread = thread::spawn(move || conn_thread(socket));
                     let res  = client_thread.join();
                 }
 
-                Err(e) => {println!("Failed to create connection:{}", e)}
+                Err(e) => {
+                    println!("Failed to create connection:{}", e);
+                    rc = false;
+                }
 
             }
         }
@@ -62,7 +83,7 @@ fn conn_thread(mut socket: TcpStream)
 {
     let hundred_ms = time::Duration::from_millis(100);
     let mut buf = [0;1024];
-    let mut p = parser::Parser;
+    let packet_parser = parser::Parser;
 
     /*
      * Thread loop
@@ -90,7 +111,7 @@ fn conn_thread(mut socket: TcpStream)
         
         }
 
-        p.parse_packet(&buf[0..msg_len]);
+        packet_parser.parse_packet(&buf[0..msg_len]);
 
         thread::sleep(hundred_ms);
     }
