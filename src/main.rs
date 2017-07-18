@@ -15,7 +15,7 @@ fn main() {
      * Declare and start server
      */
     let mut io_server = server::Server {
-        address : "127.0.0.1:3333".to_string(),
+        address : "0.0.0.0:3333".to_string(),
     };
 
     io_server.start();
