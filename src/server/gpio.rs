@@ -1,12 +1,32 @@
-extern crate sysfs_gpio;
+pub use sysfs_gpio::{Direction, Pin};
 
-use sysfs_gpio::{Direction, Pin};
+/// GPIO module implementation
+///
+/// # Variables
+///
+/// * `gpio_map` : stores valid gpio numbers
+///
+/// # Methods
+///
+/// * `fn gpio_init_map()` : Initializes Rpi-2 valid GPIOs
+/// * `fn gpio_read()` : Reads status of indicated GPIO pin
+/// * `fn gpio_set()` : Sends logic high to corresponding GPIO pin
+/// * `fn gpio_clear()` : Sets logic low to corresponding GPIO pin
 
 pub struct Gpio {
     gpio_map : [bool;256],
 }
 impl Gpio {
 
+    /// Initialize valid GPIO map
+    ///
+    /// # Description
+    /// 
+    /// It is necessary to check valid GPIO number
+    /// before operating it. Otherwise, it can damage
+    /// Raspberry Pi if wrong number is provided. This map
+    /// holds valid GPIOs.
+    
     pub fn gpio_init_map(&mut self)
     {
         self.gpio_map[2] = true; self.gpio_map[3] = true;
@@ -24,8 +44,21 @@ impl Gpio {
         self.gpio_map[20] = true; self.gpio_map[21] = true;
     }
 
+    /// Read status/logic of GPIO
+    ///
+    /// # Arguments
+    ///
+    /// * `pin` : GPIO pin number
+    ///
+    /// # Return value
+    ///
+    /// * `u8` : 0 if low and 1 if high
+    
     pub fn gpio_read(&self, pin:u64) -> u8
     {
+        /*
+         * Check if GPIO num is valid
+         */
         if pin < 256 && self.gpio_map[pin as usize] != true {
             println!("Bad GPIO pin!");
             return 0;
@@ -42,8 +75,19 @@ impl Gpio {
         return gpio.get_value().unwrap();
 
     }
+    
+    /// Set logic of GPIO high
+    ///
+    /// # Arguments
+    ///
+    /// * `pin` : GPIO pin number
+    ///
+    
     pub fn gpio_set(&self, pin:u64)
     {
+        /*
+         * Check if GPIO num is valid
+         */
         if pin < 256 && self.gpio_map[pin as usize] != true {
             println!("Bad GPIO pin!");
             return;
@@ -59,8 +103,18 @@ impl Gpio {
         gpio.set_value(1).unwrap();
     }
     
+    /// Sets logic of GPIO low
+    ///
+    /// # Arguments
+    ///
+    /// * `pin` : GPIO pin number
+    ///
+    
     pub fn gpio_clear(&self, pin:u64)
     {
+        /*
+         * Check if GPIO num is valid
+         */
         if pin < 256 && self.gpio_map[pin as usize] != true {
             println!("Bad GPIO pin!");
             return;
